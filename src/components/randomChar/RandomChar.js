@@ -74,7 +74,6 @@ class RandomChar extends Component {
 const View = ({char}) => {
   const {name, description, thumbnail, homepage, wiki} = char
   const notFound = thumbnail.split('/').findIndex(item => item === 'image_not_available.jpg');
-  console.log(notFound);
   return (
     <>
       <img src={thumbnail} alt={name} className={notFound !== -1 ? "randomchar__not_found_img" : "randomchar__img"}/>
