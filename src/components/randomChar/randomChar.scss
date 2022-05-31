@@ -13,7 +13,12 @@
     &__img {
         width: 180px;
         height: 180px;
-        object-fit: fill;
+        object-fit: cover;
+    }
+    &__not_found_img {
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
     }
     &__info {
         display: grid;
