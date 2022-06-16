@@ -22,7 +22,8 @@ class RandomChar extends Component {
   onCharLoaded = char => {
     this.setState({
       char, 
-      loading: false
+      loading: false,
+      error: false
     })
   }
 
@@ -41,7 +42,7 @@ class RandomChar extends Component {
   }
 
   render() {
-    const {char, loading, error} = this.state;
+    const { char, loading, error } = this.state;
     const errorMessage = error ? <ErrorMessage/> : null;
     const spiner = loading ? <Spinner/> : null;
     const content = !(loading || error) ? <View char={char}/> : null;
@@ -60,16 +61,16 @@ class RandomChar extends Component {
           </p>
           <p className="randomchar__title">
             Or choose another one
-          </p>
-          <button className="button button__main">
+          </p>                          
+          <button onClick={this.updateChar} className="button button__main">
             <div className="inner">try it</div>
           </button>
           <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
         </div>
       </div>
     )
-  }
-}
+  };
+};
 
 const View = ({char}) => {
   const {name, description, thumbnail, homepage, wiki} = char
@@ -83,7 +84,7 @@ const View = ({char}) => {
           {description || 'No description'}
         </p>
         <div className="randomchar__btns">
-          <a href={homepage} className="button button__main">
+          <a href={homepage} className="button button__main" target='_blank' rel="noopener noreferrer">
             <div className="inner">homepage</div>
           </a>
           <a href={wiki} className="button button__secondary">
@@ -93,6 +94,6 @@ const View = ({char}) => {
       </div>
     </>    
   )
-}
+};
 
 export default RandomChar;

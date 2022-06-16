@@ -9,6 +9,10 @@
     box-sizing: border-box;
 }
 
+body {
+    background: $theme_dark;
+}
+
 ul,
 li,
 dl {
