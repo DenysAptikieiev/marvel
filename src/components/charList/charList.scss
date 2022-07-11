@@ -13,6 +13,9 @@
         grid-template-columns: repeat(3, 200px);
         column-gap: 25px;
         row-gap: 30px;
+        max-height: 100vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
     &__item {
         width: 200px;

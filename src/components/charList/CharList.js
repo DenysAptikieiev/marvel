@@ -3,6 +3,7 @@ import './charList.scss';
 import MarvelServices from '../../services/MarvelServices';
 import { Spinner } from '../spinner/Spinner';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import cn from 'classnames';
 
 
 class CharList extends Component {
@@ -11,19 +12,33 @@ class CharList extends Component {
         charters: [],
         loading: true,
         error: false,
+        newItemsListLoading: false,
+        offset: 9,
+        charEnded: false,
     }
 
     componentDidMount() {
         this.requestCharters()
     }
 
+
     marvelServices = new MarvelServices();
 
-    onChartersLoaded = charters => {
-        this.setState({
-            charters: charters,
+    onChartersLoaded = (newCharlist) => {
+        if(newCharlist.length < 9) this.setState({charEnded: true});
+
+        this.setState(({ offset, charters: prewCharList }) => ({
+            charters: [...prewCharList, ...newCharlist],
             loading: false,
             error: false,
+            newItemsListLoading: false,
+            offset: offset + 9,
+        }))
+    }
+
+    onCharterNewListLoading = () => {
+        this.setState({
+            newItemsListLoading: true
         })
     }
 
@@ -32,24 +47,28 @@ class CharList extends Component {
         error: true,
     })
 
-    requestCharters = () => {
-        this.marvelServices.getAllCharacters()
+    requestCharters = (offset) => {
+        this.onCharterNewListLoading();
+        this.marvelServices.getAllCharacters(offset)
             .then(this.onChartersLoaded)
-            .catch(error => this.onError("Error", error))
+            .catch(error => this.onError("Error", error));
     }
 
     render() {
-        const { charters, loading, error } = this.state;
+        const { charters, loading, error, offset, newItemsListLoading, charEnded } = this.state;
         const errorMessage = error ? <ErrorMessage /> : null;
-        const spiner = loading ? <Spinner/> : null;
+        const spiner = loading ? <Spinner /> : null;
         const content = !(loading || error) ? <View charters={charters} onCharSelected={this.props.onCharSelected} /> : null;
-
         return (
             <div className="char__list">
                 {errorMessage}
                 {spiner}
                 {content}
-                <button className="button button__main button__long">
+                <button
+                    className={cn("button button__main button__long", {'button_hide' : charEnded})}
+                    disabled={newItemsListLoading}
+                    onClick={() => this.requestCharters(offset)}
+                >
                     <div className="inner">load more</div>
                 </button>
             </div>
@@ -57,7 +76,7 @@ class CharList extends Component {
     }
 };
 
-const View = ({charters, onCharSelected}) => {
+const View = ({ charters, onCharSelected }) => {
     return (
         <ul className="char__grid">
             {charters.map(item => (

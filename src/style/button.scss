@@ -15,6 +15,9 @@
         width: 170px;
         margin: 45px auto 0 auto;
     }
+    &_hide {
+        display: none;
+    }
     .inner {
         position: relative;
         background-color: $main-color;
@@ -87,5 +90,8 @@
     }
     &:hover {
         transform: translateY(-5px);
+    }
+    &:disabled {
+        filter: grayscale(.8);
     }
 }
