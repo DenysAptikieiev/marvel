@@ -107,7 +107,7 @@ const View = ({ charters, onCharSelected }) => {
 };
 
 CharList.propTypes = {
-  onCharSelected: PropTypes.number.isRequired,
+  onCharSelected: PropTypes.func.isRequired,
 };
 
 export default CharList;
