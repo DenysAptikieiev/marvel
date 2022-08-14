@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Spinner } from '../spinner/Spinner';
@@ -8,84 +8,71 @@ import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
 import MarvelServices from "../../services/MarvelServices";
 
-class CharInfo extends Component {
+const CharInfo = ({charId}) => {
 
-    state = {
-        char: null,
-        loading: false,
-        error: false,
+    const [char, setChar] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
+    const marvelServices = new MarvelServices();
+
+    useEffect(() => {
+        updateChar();
+    //eslint-disable-next-line
+    }, [charId])
+
+
+    const onCharLoaded = char => {
+        setChar(char)
+        setLoading(false)
+    }
+    const onCharLoading = () => {
+        setLoading(true)
     }
 
-    marvelServices = new MarvelServices();
-
-    componentDidMount() {
-        this.updateChar();
+    const onError = () => {
+        setError(true)
+        setLoading(false)
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.charId !== prevProps.charId) this.updateChar();
-    }
+    const updateChar = () => {
 
-    onCharLoaded = char => {
-        this.setState({
-            char,
-            loading: false,
-        })
-    }
-    onCharLoading = () => {
-        this.setState({
-            loading: true,
-        })
-    }
-
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true,
-        })
-    }
-
-    updateChar = () => {
-        const { charId } = this.props;
         if (!charId) return;
 
-        this.onCharLoading();
+        onCharLoading();
 
-        this.marvelServices
+        marvelServices
             .getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+            .then(onCharLoaded)
+            .catch(onError);
     }
 
-    render() {
-        const { char, loading, error } = this.state;
-        const skeleton = char || loading || error ? null : <Skeleton />;
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spiner = loading ? <Spinner /> : null;
-        const content = !(loading || error || !char) ? <View char={char} /> : null;
+    const skeleton = char || loading || error ? null : <Skeleton />;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spiner = loading ? <Spinner /> : null;
+    const content = !(loading || error || !char) ? <View char={char} /> : null;
 
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {spiner}
-                {content}
-            </div>
-        )
-    }
+    return (
+        <div className="char__info">
+            {skeleton}
+            {errorMessage}
+            {spiner}
+            {content}
+        </div>
+    )
 }
 
 const View = ({ char }) => {
     const { description, homepage, comics, name, thumbnail, wiki } = char;
 
-    let imgStyle = {'objectFit' : 'cover'}
+    let imgStyle = { 'objectFit': 'cover' }
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg');
-    imgStyle = {'objectFit' : 'contain'}
+    imgStyle = { 'objectFit': 'contain' }
 
     return (
         <>
             <div className="char__basics">
-                <img src={thumbnail} alt={name} style={imgStyle}/>
+                <img src={thumbnail} alt={name} style={imgStyle} />
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
