@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import MarvelServices from "../../services/MarvelServices";
+import useMarvelServices from "../../services/MarvelServices";
 import { Spinner } from '../spinner/Spinner';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
 const RandomChar = () => {
 
   const [char, setChar] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
-
-  const marvelServices = new MarvelServices();
+  const {loading, error, getCharacter, clearError} = useMarvelServices();
 
   useEffect(() => {
     updateChar();
@@ -21,20 +18,13 @@ const RandomChar = () => {
 
   const onCharLoaded = char => {
     setChar(char);
-    setLoading(false);
-    setError(false);
-  }
-
-  const onError = () => {
-    setLoading(false);
-    setError(true);
   }
 
   const updateChar = () => {
+    clearError()
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    marvelServices.getCharacter(id)
+    getCharacter(id)
       .then(onCharLoaded)
-      .catch(error => onError("Error", error))
   }
 
 
@@ -68,7 +58,7 @@ const RandomChar = () => {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char
-  const notFound = thumbnail.split('/').findIndex(item => item === "image_not_available.jpg");
+  const notFound = thumbnail?.split('/').findIndex(item => item === "image_not_available.jpg");
   return (
     <>
       <img src={thumbnail} alt={name} className={notFound !== -1 ? "randomchar__not_found_img" : "randomchar__img"} />
